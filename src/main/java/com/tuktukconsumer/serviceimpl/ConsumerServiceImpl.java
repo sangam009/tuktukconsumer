@@ -1,5 +1,8 @@
 package com.tuktukconsumer.serviceimpl;
 
+import java.io.BufferedReader;
+import java.io.IOException;
+import java.io.InputStreamReader;
 import java.util.Arrays;
 
 import javax.servlet.http.HttpServletRequest;
@@ -10,11 +13,14 @@ import org.apache.kafka.clients.consumer.ConsumerRecord;
 import org.apache.kafka.clients.consumer.ConsumerRecords;
 import org.apache.kafka.clients.producer.Producer;
 import org.apache.kafka.clients.producer.ProducerRecord;
+import org.json.JSONObject;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
 import com.google.gson.JsonObject;
+import com.google.gson.JsonParser;
 import com.tuktukconsumer.services.ConsumerService;
+
 
 @Service("consumerservice")
 public class ConsumerServiceImpl implements ConsumerService {
@@ -29,7 +35,7 @@ public class ConsumerServiceImpl implements ConsumerService {
 	public String getStatusOfKafka(HttpServletRequest req, HttpServletResponse res) {
 
 		try {
-			JsonObject consumerOptions = new JsonObject();
+			JSONObject consumerOptions = new JSONObject();
 			JsonObject producerOptions = new JsonObject();
 			Consumer<String, String> consumer = supportservice.getKafkaConsumer(consumerOptions);
 			consumer.subscribe(Arrays.asList("status"));
@@ -69,6 +75,14 @@ public class ConsumerServiceImpl implements ConsumerService {
 			return "fail";
 		}
 
+	}
+
+	@Override
+	public String getWikiResponse(HttpServletRequest req, HttpServletResponse res) throws Exception {
+		
+		JsonObject requestObject = supportservice.getRequestObject(req);
+
+		return supportservice.getWikiResponse(requestObject);
 	}
 
 }

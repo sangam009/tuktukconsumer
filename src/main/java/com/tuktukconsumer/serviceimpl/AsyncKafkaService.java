@@ -40,9 +40,10 @@ public class AsyncKafkaService extends ClassLoader {
 	@Async("multitasker")
 	@SuppressWarnings({ "unchecked", "rawtypes" })
 	public void addConsumerToTopicWithoutReflection(String topicname, String group) {
+		System.out.println("group name here is " + group);
 		try {
-			JsonObject consumerOptions = new JsonObject();
-			consumerOptions.addProperty("group", group);
+			JSONObject consumerOptions = new JSONObject();
+			consumerOptions.put("group", group);
 			Consumer<String, String> consumer = supportservice.getKafkaConsumer(consumerOptions);
 			consumer.subscribe(Arrays.asList(topicname));
 			while (true) {
@@ -65,17 +66,26 @@ public class AsyncKafkaService extends ClassLoader {
 		Double lat = Double.parseDouble(location.get("lat").toString());
 		Double lon = Double.parseDouble(location.get("lng").toString());
 		List<Place> places = client.getNearbyPlaces(lat, lon, 500.0, GooglePlaces.MAXIMUM_RESULTS);
+		System.out.println("place searh value is "+places.get(0));
 		for (Place place : places) {
 			Place response = client.getPlaceById(place.getPlaceId());
 			JSONObject responseInJson = response.getJson();
 			String geometry = responseInJson.get("geometry").toString().replace("lng", "lon");
 			JSONObject geometryJson = new JSONObject(geometry);
 			responseInJson.put("geometry", geometryJson);
+			
 			System.out.println("final json to index is " + responseInJson.toString());
 			indexInElasticsearch(responseInJson);
 		}
 
 	}
+	
+	@Async("multitasker")
+	private JSONObject getDataFromWiki(JSONObject indexData) {
+		
+		return indexData;
+	}
+	
 	@Async("multitasker")
 	private void indexInElasticsearch(JSONObject json) {
 		try {

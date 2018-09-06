@@ -1,5 +1,7 @@
 package com.tuktukconsumer.controller;
 
+import java.io.IOException;
+
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 
@@ -28,6 +30,13 @@ public class PrimeController {
 	public String getStatusOfTopic(HttpServletRequest req, HttpServletResponse res) {
 
 		return consumerservice.getStatusOfKafka(req, res);
+	}
+	
+	@RequestMapping(value = "/getWikiResponse", method = RequestMethod.POST, headers = "Content-Type=application/json")
+	@ResponseBody
+	public String getWikiResponse(HttpServletRequest req, HttpServletResponse res) throws Exception {
+
+		return consumerservice.getWikiResponse(req, res);
 	}
 
 	@RequestMapping(value = "/addConsumerOnTopic", method = RequestMethod.POST)
